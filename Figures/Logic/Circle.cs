@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Figures.Logic
+namespace Figures2.Logic
 {
     internal class Circle : Figure
     {
@@ -13,17 +13,16 @@ namespace Figures.Logic
         private int squaredRadius;
         private int diameter;
 
-        public Circle(float x, float y)
+        public Circle(Vec2 vec)
         {
-            posX = x;
-            posY = y;
+            pos = vec;
             SetRadius(5);
         }
 
-        public override bool IsInside(float x, float y)
+        public override bool IsInside(Vec2 vec)
         {
-            var dx = x - posX;
-            var dy = y - posY;
+            var dx = vec.x - pos.x;
+            var dy = vec.y - pos.y;
 
             if (dx * dx + dy * dy <= squaredRadius) return true;
 
@@ -32,8 +31,8 @@ namespace Figures.Logic
 
         public override void Draw(Graphics g)
         {
-            var x0 = posX - radius;
-            var y0 = posY - radius;
+            var x0 = pos.x - radius;
+            var y0 = pos.y - radius;
 
             var rgb = color;
             Pen pen = new Pen(new SolidBrush(Color.FromArgb(255, (int)rgb.red, (int)rgb.green, (int)rgb.blue)));
@@ -48,6 +47,11 @@ namespace Figures.Logic
             radius = r;
             squaredRadius = radius * radius;
             diameter = radius * 2;
+        }
+
+        public override float Sdf(Vec2 p)
+        {
+            return (pos - p).Length() - radius;
         }
     }
 }

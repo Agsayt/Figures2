@@ -5,21 +5,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Figures.Logic
+namespace Figures2.Logic
 {
     internal class Triangle : Figure
     {
         private int triangleSide;
         List<PointF> trianglePoints;
 
-        public Triangle(int side, float x, float y)
+        public Triangle(int side, Vec2 vec)
         {
-            posX = x;
-            posY = y;
-
-            trianglePoints = new List<PointF>();
+            pos = vec;
 
             SetSide(side);
+            trianglePoints = new List<PointF>();
+
+            var p1 = new PointF(pos.x, pos.y - triangleSide / 2);
+            var p2 = new PointF(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
+            var p3 = new PointF(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
+
+            trianglePoints.Add(p1);
+            trianglePoints.Add(p2);
+            trianglePoints.Add(p3);
         }
 
         
@@ -27,9 +33,9 @@ namespace Figures.Logic
         public override void Draw(Graphics g)
         {
             trianglePoints.Clear();
-            var p1 = new PointF(posX, posY - triangleSide/2);
-            var p2 = new PointF(posX + triangleSide / 2, posY + triangleSide / 2);
-            var p3 = new PointF(posX - triangleSide / 2, posY + triangleSide / 2);
+            var p1 = new PointF(pos.x, pos.y - triangleSide/2);
+            var p2 = new PointF(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
+            var p3 = new PointF(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
 
             trianglePoints.Add(p1);
             trianglePoints.Add(p2);
@@ -46,11 +52,11 @@ namespace Figures.Logic
 
 
 
-        public override bool IsInside(float x, float y)
+        public override bool IsInside(Vec2 vec)
         {
             float d1, d2, d3;
             bool has_neg, has_pos;
-            var pt = new PointF(x, y);
+            var pt = new PointF(vec.x, vec.y);
 
 
             d1 = sign(pt, trianglePoints[0], trianglePoints[1]);
@@ -92,6 +98,11 @@ namespace Figures.Logic
         public void SetSide(int side)
         {
             triangleSide = side;
+        }
+
+        public override float Sdf(Vec2 p)
+        {
+            throw new NotImplementedException();
         }
     }
 }

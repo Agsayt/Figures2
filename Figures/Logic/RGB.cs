@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Figures.Logic
+namespace Figures2.Logic
 {
     internal class RGB
     {
@@ -14,14 +14,17 @@ namespace Figures.Logic
         public float green;
         public float blue;
 
-        public RGB()
-        {
-
+        public RGB(){
+            red = 0;
+            green = 0;
+            blue = 0;
         }
 
         public RGB(float c)
         {
-
+            red = c;
+            green = c;
+            blue = c;
         }
 
         public RGB(float r, float g, float b)
@@ -33,18 +36,36 @@ namespace Figures.Logic
 
         public static RGB operator +(RGB a, RGB b)
         {
-            return new RGB();
+            var nred = a.red + b.red;
+            var ngreen = a.green + b.green;
+            var nblue = a.blue + b.blue;
+
+            if (nred > 255) nred = 255;
+            if (ngreen > 255) ngreen = 255;
+            if (nblue > 255) ngreen = 255;
+
+            return new RGB(nred, ngreen, nblue);
         }
 
         public static RGB operator *(RGB a, float x)
         {
-            return new RGB();
+            var nred = a.red * x;
+            var ngreen = a.green * x;
+            var nblue = a.blue * x;
+
+            if (nred > 255) nred = 255;
+            if (ngreen > 255) ngreen = 255;
+            if (nblue > 255) nblue = 255;
+
+            return new RGB(nred, ngreen, nblue);
         }
 
         public Color GetColor()
         {
+            Color color = new Color();
+            color = Color.FromArgb(255, (int)red, (int)green, (int)blue);
 
-            return new Color();
+            return color;
         }
 
         public RGB GetRandom()

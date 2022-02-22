@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Figures.Properties {
+namespace Figures2.Properties {
     using System;
     
     

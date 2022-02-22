@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Figures.Logic
+namespace Figures2.Logic
 {
     abstract class Figure
     {
-        public float posX, posY;
+        public Vec2 pos;
         public bool isSelected;
         public int localId;
         public string name;
@@ -19,11 +19,11 @@ namespace Figures.Logic
         {
             color = new RGB();
             color = color.GetRandom();
-
         }
 
-        public abstract bool IsInside(float x, float y);
+        public abstract bool IsInside(Vec2 vec);
         public abstract void Draw(Graphics g);
+        public abstract float Sdf(Vec2 p);
 
 
         override

@@ -1,4 +1,4 @@
-﻿using Figures.Logic;
+﻿using Figures2.Logic;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.Devices;
 using System;
@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Figures
+namespace Figures2
 {
     public partial class Form1 : Form
     {
@@ -22,6 +22,8 @@ namespace Figures
             FigureCB.Items.AddRange(Enum.GetNames(typeof(Figures)));
             FigureCB.SelectedIndex = 0;
             selectedFigures = new List<Figure>();
+            bitmap = new Bitmap(canvas.Width, canvas.Height);
+            canvas.Image = bitmap;
         }
 
         enum Figures
@@ -37,6 +39,7 @@ namespace Figures
         Figures figToCreate;
         private int oldX;
         private int oldY;
+        Bitmap bitmap;
         #endregion
 
 
@@ -44,6 +47,11 @@ namespace Figures
         {
             canvas.Width = this.Width - 10;
             canvas.Height = this.Height - 10;
+            var tempBitmap = bitmap;
+
+            bitmap = new Bitmap(canvas.Width, canvas.Height);
+            bitmap = tempBitmap.Clone(new Rectangle(0,0, tempBitmap.Width, tempBitmap.Height), System.Drawing.Imaging.PixelFormat.Format64bppArgb);
+            canvas.Image = bitmap;
         }
 
         private void FigureCB_SelectedIndexChanged(object sender, EventArgs e)
@@ -78,7 +86,8 @@ namespace Figures
             switch(figToCreate)
             {
                 case Figures.Circle:
-                    var circle = new Circle(middlePoint.X, middlePoint.Y);
+                    
+                    var circle = new Circle(new Vec2(middlePoint.X, middlePoint.Y));
                     circle.SetRadius(20);
                     circle.color = new RGB(selectedColor.R, selectedColor.G, selectedColor.B);
                     id = figureList.Where(x => x.name.Contains("circle")).Count() + 1;
@@ -88,7 +97,8 @@ namespace Figures
                     FiguresLB.Items.Add(circle);
                     break;
                 case Figures.Square:
-                    var square = new Square(100, middlePoint.X, middlePoint.Y);
+
+                    var square = new Square(100, new Vec2(middlePoint.X, middlePoint.Y));
                     square.color = new RGB(selectedColor.R, selectedColor.G, selectedColor.B);
                     id = figureList.Where(x => x.name.Contains("square")).Count() + 1;
                     square.localId = id;
@@ -97,7 +107,7 @@ namespace Figures
                     FiguresLB.Items.Add(square);
                     break;
                 case Figures.Triangle: 
-                    var triangle = new Triangle(40, middlePoint.X, middlePoint.Y);
+                    var triangle = new Triangle(40, new Vec2(middlePoint.X, middlePoint.Y));
                     triangle.color = new RGB(selectedColor.R, selectedColor.G, selectedColor.B);
                     id = figureList.Where(x => x.name.Contains("triangle")).Count() + 1;
                     triangle.localId = id;
@@ -110,17 +120,15 @@ namespace Figures
             canvas.Invalidate();
         }
 
-        private void canvas_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+        //private void canvas_Paint(object sender, PaintEventArgs e)
+        //{
+        //    e.Graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
-            foreach (var item in figureList)
-            {
-                item.Draw(e.Graphics);
-            }
-
-            
-        }
+        //    foreach (var item in figureList)
+        //    {
+        //        item.Draw(e.Graphics);
+        //    }            
+        //}
 
         private void canvas_MouseDown(object sender, MouseEventArgs e)
         {
@@ -136,7 +144,7 @@ namespace Figures
 
             foreach (var figure in figureList)
             {                
-                if (figure.IsInside(e.X, e.Y))
+                if (figure.IsInside(new Vec2(e.X, e.Y)))
                 {
                     figure.isSelected = true;
                     selectedFigures.Add(figure);
@@ -162,8 +170,8 @@ namespace Figures
                         var dx = e.X - oldX; 
                         var dy = e.Y - oldY;
 
-                        figure.posX += dx;
-                        figure.posY += dy;
+                        figure.pos.x += dx;
+                        figure.pos.y += dy;
                     }
                 }
                 canvas.Invalidate();
@@ -267,7 +275,7 @@ namespace Figures
 
             foreach (var figure in figureList)
             {
-                if (figure.IsInside(e.X, e.Y))
+                if (figure.IsInside(new Vec2(e.X, e.Y)))
                 {
                     figure.isSelected = true;
                     RenameFigure(figure);
@@ -299,5 +307,40 @@ namespace Figures
                 }
             }
         }
+
+        private void toolStripButton1_Click(object sender, EventArgs e)
+        {
+            bitmap.MakeTransparent();
+
+            for (int y = 0; y < bitmap.Height; y++)
+            {
+                for (int x = 0; x < bitmap.Width; x++)
+                {
+                    RGB c = new RGB();
+
+                    Vec2 vec = new Vec2(x, y);
+                    var dmin = 100.0f;
+                    foreach (var figure in figureList)
+                    {
+                        var d = figure.Sdf(vec);
+                        if (d < dmin) dmin = d;
+
+
+                        //if (figure.IsInside(new Vec2(x, y)))
+                        //{
+                        //    c = figure.color;
+                        //}
+                    }
+                    if (dmin < 0)
+                        Console.WriteLine(dmin);
+                    c = new RGB(dmin / 100.0f);
+                    //Console.WriteLine(c);
+
+                    bitmap.SetPixel(x, y, c.GetColor());
+                }
+            }
+            canvas.Invalidate();
+        }
+       
     }
 }

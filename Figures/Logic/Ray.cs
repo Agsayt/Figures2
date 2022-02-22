@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Figures.Logic
+namespace Figures2.Logic
 {
     internal class Ray
     {
@@ -13,12 +13,14 @@ namespace Figures.Logic
 
         public Ray(Vec2 org, Vec2 dir)
         {
-
+            this.org = org;
+            this.dir = dir;
         }
 
-        public Vec2 PointAtDistance(float x)
+        public Vec2 PointAtDistance(float distance)
         {
-            return new Vec2();
+            var point = org + dir * distance;
+            return point;
         }
     }
 }
