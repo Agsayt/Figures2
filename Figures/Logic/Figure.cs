@@ -21,8 +21,24 @@ namespace Figures2.Logic
             color = color.GetRandom();
         }
 
+        /// <summary>
+        /// Check if vec2 is inside the figure
+        /// </summary>
+        /// <param name="vec">Vector2</param>
+        /// <returns>Bool result</returns>
         public abstract bool IsInside(Vec2 vec);
+
+        /// <summary>
+        /// Draw figure
+        /// </summary>
+        /// <param name="g">Graphics</param>
         public abstract void Draw(Graphics g);
+
+        /// <summary>
+        /// SDF for figure
+        /// </summary>
+        /// <param name="p">Vector2</param>
+        /// <returns>??</returns>
         public abstract float Sdf(Vec2 p);
 
 

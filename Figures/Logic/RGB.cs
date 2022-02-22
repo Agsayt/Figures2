@@ -60,6 +60,10 @@ namespace Figures2.Logic
             return new RGB(nred, ngreen, nblue);
         }
 
+        /// <summary>
+        /// Get Color of figure
+        /// </summary>
+        /// <returns>Color</returns>
         public Color GetColor()
         {
             Color color = new Color();
@@ -71,6 +75,10 @@ namespace Figures2.Logic
             return color;
         }
 
+        /// <summary>
+        /// Get random RGB color
+        /// </summary>
+        /// <returns>RGB</returns>
         public RGB GetRandom()
         {
             var rnd = new Random();

@@ -44,6 +44,11 @@ namespace Figures2.Logic
             return true;
         }
 
+        /// <summary>
+        /// Get SDF
+        /// </summary>
+        /// <param name="p">Vector2</param>
+        /// <returns>Float</returns>
         public override float Sdf(Vec2 p)
         {
             var d = (p - pos).Abs() - halfSide;
@@ -54,6 +59,10 @@ namespace Figures2.Logic
             return innerD + outerD;
         }
 
+        /// <summary>
+        /// Set side for the square
+        /// </summary>
+        /// <param name="side">Side length</param>
         public void SetSide(int side)
         {
             squareSide = side;

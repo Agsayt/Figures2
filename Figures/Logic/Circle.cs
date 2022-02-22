@@ -42,6 +42,10 @@ namespace Figures2.Logic
             g.DrawEllipse(pen, x0, y0, diameter, diameter);
         }
 
+        /// <summary>
+        /// Set circle radius
+        /// </summary>
+        /// <param name="r">Radius</param>
         public void SetRadius(int r)
         {
             radius = r;
@@ -49,6 +53,11 @@ namespace Figures2.Logic
             diameter = radius * 2;
         }
 
+        /// <summary>
+        /// Get SDF on point
+        /// </summary>
+        /// <param name="p">Vector2</param>
+        /// <returns>??</returns>
         public override float Sdf(Vec2 p)
         {
             return (pos - p).Length() - radius;

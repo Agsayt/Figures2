@@ -21,6 +21,8 @@ namespace Figures2
 
             FigureCB.Items.AddRange(Enum.GetNames(typeof(Figures)));
             FigureCB.SelectedIndex = 0;
+            renderMode.Items.AddRange(Enum.GetNames(typeof(RenderMode)));
+            renderMode.SelectedIndex = 0;
             selectedFigures = new List<Figure>();
             bitmap = new Bitmap(canvas.Width, canvas.Height);
             canvas.Image = bitmap;
@@ -33,10 +35,17 @@ namespace Figures2
             Triangle
         }
 
+        enum RenderMode
+        {
+            Fill,
+            Sdf
+        }
+
         #region vars
         List<Figure> figureList = new List<Figure>();
         List<Figure> selectedFigures;
         Figures figToCreate;
+        RenderMode modeToRender;
         private int oldX;
         private int oldY;
         Bitmap bitmap;
@@ -316,31 +325,58 @@ namespace Figures2
             {
                 for (int x = 0; x < bitmap.Width; x++)
                 {
-                    RGB c = new RGB();
+                    RGB c = new RGB(255,255,255);
 
                     Vec2 vec = new Vec2(x, y);
                     var dmin = 100.0f;
-                    foreach (var figure in figureList)
+
+                    switch(modeToRender)
                     {
-                        var d = figure.Sdf(vec);
-                        if (d < dmin) dmin = d;
+                        case RenderMode.Fill:
+                            foreach (var figure in figureList)
+                            {
+                                if (figure.IsInside(new Vec2(x, y)))
+                                {
+                                    c = figure.color;
+                                }
+                            }                            
+                            break;
+                        case RenderMode.Sdf:
+                            foreach (var figure in figureList)
+                            {
+                                var d = figure.Sdf(vec);
+                                if (d < dmin) dmin = d;
+                            }
 
-
-                        //if (figure.IsInside(new Vec2(x, y)))
-                        //{
-                        //    c = figure.color;
-                        //}
+                            c = new RGB(dmin / 100.0f);
+                            break;
                     }
-                    if (dmin < 0)
-                        Console.WriteLine(dmin);
-                    c = new RGB(dmin / 100.0f);
-                    //Console.WriteLine(c);
 
                     bitmap.SetPixel(x, y, c.GetColor());
                 }
             }
             canvas.Invalidate();
         }
-       
+
+        private void renderMode_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var item = (sender as ToolStripComboBox);
+
+            if (item == null)
+                return;
+
+            switch (item.SelectedItem.ToString())
+            {
+                case "Fill":
+                    modeToRender = RenderMode.Fill;
+                    break;
+                case "Sdf":
+                    modeToRender = RenderMode.Sdf;
+                    break;
+                
+            }
+
+            canvas.Focus();
+        }
     }
 }

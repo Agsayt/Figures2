@@ -95,11 +95,16 @@ namespace Figures2.Logic
             return new Vec2(centerX / accumulatedArea, centerY / accumulatedArea);
         }
 
+        /// <summary>
+        /// Set side for triangle
+        /// </summary>
+        /// <param name="side">Side length</param>
         public void SetSide(int side)
         {
             triangleSide = side;
         }
 
+        
         public override float Sdf(Vec2 p)
         {
             p = pos - p;
