@@ -26,6 +26,7 @@ namespace Figures2.Logic
         public static Vec2 operator -(Vec2 a, float x) => new Vec2(a.x - x, a.y - x);
 
         public static Vec2 operator *(Vec2 a, float x) => new Vec2(a.x * x, a.y * x);
+        public static Vec2 operator /(Vec2 a, float x) => new Vec2(a.x / x, a.y / x);
 
         public static Vec2 FromPolar(float angle)
         {

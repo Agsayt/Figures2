@@ -63,6 +63,9 @@ namespace Figures2.Logic
         public Color GetColor()
         {
             Color color = new Color();
+            red = Math.Min(Math.Max(red *255, 0), 255);
+            green = Math.Min(Math.Max(green *255, 0), 255);
+            blue = Math.Min(Math.Max(blue *255, 0), 255);
             color = Color.FromArgb(255, (int)red, (int)green, (int)blue);
 
             return color;

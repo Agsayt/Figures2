@@ -10,18 +10,18 @@ namespace Figures2.Logic
     internal class Triangle : Figure
     {
         private int triangleSide;
-        List<PointF> trianglePoints;
+        List<Vec2> trianglePoints;
 
         public Triangle(int side, Vec2 vec)
         {
             pos = vec;
 
             SetSide(side);
-            trianglePoints = new List<PointF>();
+            trianglePoints = new List<Vec2>();
 
-            var p1 = new PointF(pos.x, pos.y - triangleSide / 2);
-            var p2 = new PointF(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
-            var p3 = new PointF(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
+            var p1 = new Vec2(pos.x, pos.y - triangleSide / 2);
+            var p2 = new Vec2(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
+            var p3 = new Vec2(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
 
             trianglePoints.Add(p1);
             trianglePoints.Add(p2);
@@ -33,9 +33,9 @@ namespace Figures2.Logic
         public override void Draw(Graphics g)
         {
             trianglePoints.Clear();
-            var p1 = new PointF(pos.x, pos.y - triangleSide/2);
-            var p2 = new PointF(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
-            var p3 = new PointF(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
+            var p1 = new Vec2(pos.x, pos.y - triangleSide/2);
+            var p2 = new Vec2(pos.x + triangleSide / 2, pos.y + triangleSide / 2);
+            var p3 = new Vec2(pos.x - triangleSide / 2, pos.y + triangleSide / 2);
 
             trianglePoints.Add(p1);
             trianglePoints.Add(p2);
@@ -45,9 +45,9 @@ namespace Figures2.Logic
 
             if (isSelected) pen = Pens.Green;
 
-            g.DrawLine(pen, p1, p2);
-            g.DrawLine(pen, p2, p3);
-            g.DrawLine(pen, p3, p1);
+            g.DrawLine(pen, new PointF(p1.x, p1.y), new PointF(p2.x,p2.y));
+            g.DrawLine(pen, new PointF(p2.x, p2.y), new PointF(p3.x, p3.y));
+            g.DrawLine(pen, new PointF(p3.x, p3.y), new PointF(p1.x, p3.y));
         }
 
 
@@ -56,7 +56,7 @@ namespace Figures2.Logic
         {
             float d1, d2, d3;
             bool has_neg, has_pos;
-            var pt = new PointF(vec.x, vec.y);
+            var pt = new Vec2(vec.x, vec.y);
 
 
             d1 = sign(pt, trianglePoints[0], trianglePoints[1]);
@@ -69,12 +69,12 @@ namespace Figures2.Logic
             return !(has_neg && has_pos);
         }
 
-        float sign(PointF p1, PointF p2, PointF p3)
+        float sign(Vec2 p1, Vec2 p2, Vec2 p3)
         {
-            return (p1.X - p3.X) * (p2.Y - p3.Y) - (p2.X - p3.X) * (p1.Y - p3.Y);
+            return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
         }
 
-        public static PointF GetCentroid(List<PointF> poly)
+        public static Vec2 GetCentroid(List<Vec2> poly)
         {
             float accumulatedArea = 0.0f;
             float centerX = 0.0f;
@@ -82,17 +82,17 @@ namespace Figures2.Logic
 
             for (int i = 0, j = poly.Count - 1; i < poly.Count; j = i++)
             {
-                float temp = poly[i].X * poly[j].Y - poly[j].X * poly[i].Y;
+                float temp = poly[i].x * poly[j].y - poly[j].x * poly[i].y;
                 accumulatedArea += temp;
-                centerX += (poly[i].X + poly[j].X) * temp;
-                centerY += (poly[i].Y + poly[j].Y) * temp;
+                centerX += (poly[i].x + poly[j].x) * temp;
+                centerY += (poly[i].y + poly[j].y) * temp;
             }
 
             if (Math.Abs(accumulatedArea) < 1E-7f)
-                return PointF.Empty;
+                return new Vec2(0,0);
 
             accumulatedArea *= 3f;
-            return new PointF(centerX / accumulatedArea, centerY / accumulatedArea);
+            return new Vec2(centerX / accumulatedArea, centerY / accumulatedArea);
         }
 
         public void SetSide(int side)
@@ -102,7 +102,13 @@ namespace Figures2.Logic
 
         public override float Sdf(Vec2 p)
         {
-            throw new NotImplementedException();
+            p = pos - p;
+            var k = Math.Sqrt(3);
+            p.x = Math.Abs(p.x) - 1;
+            p.y = (float)(p.y + 1 / k);
+            if (p.x + k * p.y > 0) p = new Vec2((float)(p.x - k * p.y), (float)(-k * p.x - p.y)) / 2;
+            p.x -= (p.x >= -2) ? p.x : -2;
+            return -p.Length() * Math.Sign(p.y);
         }
     }
 }
